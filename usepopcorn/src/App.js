@@ -50,12 +50,12 @@ const tempWatchedData = [
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
-const Navbar = ({ movies }) => {
+const Navbar = ({ children }) => {
   return (
     <nav className="nav-bar">
       <Logo />
       <SearchBar />
-      <NumMovies movies={movies} />
+      {children}
     </nav>
   );
 };
@@ -91,27 +91,19 @@ const SearchBar = () => {
   );
 };
 
-const Main = ({ movies }) => {
-  return (
-    <main className="main">
-      <ListMovies movies={movies} />
-      <WatchedMovies />
-    </main>
-  );
+const Main = ({ children }) => {
+  return <main className="main">{children}</main>;
 };
 
-const ListMovies = ({ movies }) => {
-  const [isOpen1, setIsOpen1] = useState(true);
+const Box = ({ children }) => {
+  const [isOpen, setIsOpen] = useState(true);
 
   return (
     <div className="box">
-      <button
-        className="btn-toggle"
-        onClick={() => setIsOpen1((open) => !open)}
-      >
-        {isOpen1 ? "–" : "+"}
+      <button className="btn-toggle" onClick={() => setIsOpen((open) => !open)}>
+        {isOpen ? "–" : "+"}
       </button>
-      {isOpen1 && <Movies movies={movies} />}
+      {isOpen && children}
     </div>
   );
 };
@@ -138,28 +130,6 @@ const Movie = ({ movie }) => {
         </p>
       </div>
     </li>
-  );
-};
-
-const WatchedMovies = () => {
-  const [watched, setWatched] = useState(tempWatchedData);
-  const [isOpen2, setIsOpen2] = useState(true);
-
-  return (
-    <div className="box">
-      <button
-        className="btn-toggle"
-        onClick={() => setIsOpen2((open) => !open)}
-      >
-        {isOpen2 ? "–" : "+"}
-      </button>
-      {isOpen2 && (
-        <>
-          <Summary watched={watched} />
-          <WatchedMovieList watched={watched} />
-        </>
-      )}
-    </div>
   );
 };
 
@@ -228,11 +198,22 @@ const WatchedMovie = ({ movie }) => {
 
 export default function App() {
   const [movies, setMovies] = useState(tempMovieData);
+  const [watched, setWatched] = useState(tempWatchedData);
 
   return (
     <>
-      <Navbar movies={movies} />
-      <Main movies={movies} />
+      <Navbar>
+        <NumMovies movies={movies} />
+      </Navbar>
+      <Main>
+        <Box>
+          <Movies movies={movies} />
+        </Box>
+        <Box>
+          <Summary watched={watched} />
+          <WatchedMovieList watched={watched} />
+        </Box>
+      </Main>
     </>
   );
 }
